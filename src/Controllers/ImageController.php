@@ -10,9 +10,8 @@ class ImageController extends Controller
 {
     public function getImage(Request $request)
     {
-        $contents = HashRelation::getImage($request->hash, $request->w, $request->h);
-        $response = response()->make($contents, 200);
-        $response->header("Content-Type", 'image/png');
-        return $response;
+        $contents = HashRelation::getImageResponse($request->hash, $request->w, $request->h);
+        return \Response::make($contents, 200, ['Content-Type'=>'image/jpg']);
+
     }
 }
