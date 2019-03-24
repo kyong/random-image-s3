@@ -7,7 +7,7 @@ use Intervention\Image\ImageManagerStatic as Image;
 
 class HashRelation extends Model
 {
-    protected $table = 'hash_relations';
+    protected $table = 'random_image_hash_relations';
     protected $fillable = [
         'path',
     ];
@@ -41,14 +41,20 @@ class HashRelation extends Model
         $relation = self::where(['hash' => $hash])->get()->first();
         // TODO: エラー処理
 
-        $cache_path = config('random-image-s3.chache'). '/' . $hash . '/w' . $w  . 'h' . $h; 
-        if(\Storage::disk('local')->exists( $cache_path )){
-            return \Storage::disk('local')->get( $cache_path );
+        if( config('random-image-s3.ischache') ){
+            $cache_path = config('random-image-s3.chache-dir'). '/' . $hash . '/w' . $w  . 'h' . $h; 
+            if(\Storage::disk('local')->exists( $cache_path )){
+                return \Storage::disk('local')->get( $cache_path );
+            }
         }
 
         $image = \Storage::disk('s3')->get($relation->path);
         $response = Image::make($image)->fit($w, $h)->stream('jpg');
-        \Storage::put( $cache_path, $response );
+
+        if( config('random-image-s3.ischache') ){
+            \Storage::put( $cache_path, $response );
+        }
+        
         return $response;
     }
 

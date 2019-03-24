@@ -1,5 +1,7 @@
 <?php
 
 return [
-    'uri' => 'randomimage'
+    'uri' => 'randomimage',
+    'chache-dir' => 'randomimage_chache',
+    'ischache' => true,
 ];

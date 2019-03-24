@@ -13,7 +13,7 @@ class CreateHashRelationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('hash_relations', function (Blueprint $table) {
+        Schema::create('random_image_hash_relations', function (Blueprint $table) {
             $table->increments('id');
             $table->string('path');
             $table->uuid('hash');
@@ -30,6 +30,6 @@ class CreateHashRelationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('hash_relations');
+        Schema::dropIfExists('random_image_hash_relations');
     }
 }
