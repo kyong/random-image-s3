@@ -22,6 +22,16 @@ HashRelation::makeUrl();
 
 ## Install
 
+```
+
+composer require kyong/random-image-s3
+
+php artisan vendor:publish --provider="Kyong\RandomImageS3\RandomImageS3ServiceProvider"
+
+php artisan migrate
+
+```
+
 
 ## Licence
 
