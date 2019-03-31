@@ -4,6 +4,7 @@ namespace Kyong\RandomImageS3;
 
 use Illuminate\Database\Eloquent\Model;
 use Intervention\Image\ImageManagerStatic as Image;
+use League\Flysystem\Filesystem;
 
 class HashRelation extends Model
 {
@@ -25,7 +26,7 @@ class HashRelation extends Model
 
     public static function makeUrl($w=600, $h=400)
     {
-        $list = \Storage::disk('s3')->allFiles();
+        $list = \Storage::disk(config('random-image-s3.disk', 's3'))->allFiles();
         $list = array_filter($list, function($path, $k){
             return preg_match( '/.*?(\.png|\.jpg|\.jpeg)$/', $path);
         }, ARRAY_FILTER_USE_BOTH);
@@ -41,14 +42,14 @@ class HashRelation extends Model
         $relation = self::where(['hash' => $hash])->get()->first();
         // TODO: エラー処理
 
-        if( config('random-image-s3.ischache') ){
+        if( config('random-image-s3.iscache') ){
             $cache_path = config('random-image-s3.chache-dir'). '/' . $hash . '/w' . $w  . 'h' . $h; 
-            if(\Storage::disk('local')->exists( $cache_path )){
-                return \Storage::disk('local')->get( $cache_path );
+            if(\Storage::disk(config('random-image-s3.chache-disk', 'local'))->exists( $cache_path )){
+                return \Storage::disk(config('random-image-s3.chache-disk', 'local'))->get( $cache_path );
             }
         }
 
-        $image = \Storage::disk('s3')->get($relation->path);
+        $image = \Storage::disk(config('random-image-s3.disk', 's3'))->get($relation->path);
         $response = Image::make($image)->fit($w, $h)->stream('jpg');
 
         if( config('random-image-s3.ischache') ){
